@@ -10,7 +10,7 @@ def multiplication_table(number):
     # Complete the while loop condition.
     while True:
         result = number * multiplier
-        if  result <= 25:
+        if result <= 25:
             print(f"{number} x {multiplier} = {result}")
             multiplier += 1
         else:
@@ -18,7 +18,7 @@ def multiplication_table(number):
 
 multiplication_table(3)
 
-print("#"*100)
+print("#" * 100)
 
 # task 2
 """  Написати функцію, яка обчислює суму двох чисел.
@@ -26,9 +26,9 @@ print("#"*100)
 def result_sum(number1, number2):
     sum = number1 + number2
     print(sum)
-result_sum(10,12)
+result_sum(10, 12)
 
-print("#"*100)
+print("#" * 100)
 
 # task 3
 """  Написати функцію, яка розрахує середнє арифметичне списку чисел.
@@ -41,10 +41,10 @@ def result_average(numbers):
     average_result = sum(numbers) / len(numbers)
     print(average_result)
 
-numbers = [1,6,33]
+numbers = [1, 6, 33]
 result_average(numbers)
 
-print("#"*100)
+print("#" * 100)
 
 # task 4
 """  Написати функцію, яка приймає рядок та повертає його у зворотному порядку.
@@ -52,15 +52,15 @@ print("#"*100)
 
 def vice_versa_result(sentence):
     if len(sentence) == 0:
-        return f"The sentence are absent"
+        return f"The sentence is empty"
 
     reverce_line = sentence[::-1]
-    print(f"Vice versa result: {reverce_line}")
+    print(f"Reversed result: {reverce_line}")
 
 sentance = "Hi! How are you?"
 vice_versa_result(sentance)
 
-print("#"*100)
+print("#" * 100)
 
 # task 5
 """  Написати функцію, яка приймає список слів та повертає найдовше слово у списку.
@@ -70,12 +70,12 @@ def long_word(sentance):
     if len(sentance) == 0:
         return f"The sentence are absent"
     words = sentance.split()   # is the list of words obtained after splitting the sentence with split()
-    longest_word = max(words, key= len)   # calculates the length of each word
+    longest_word = max(words, key=len)   # calculates the length of each word
     print(longest_word)
 
 sentance = "This is a simple sentence with several words"
 long_word(sentance)
-print("#"*100)
+print("#" * 100)
 
 # task 6
 """  Написати функцію, яка приймає два рядки та повертає індекс першого входження другого рядка
@@ -96,7 +96,7 @@ str1 = "The quick brown fox jumps over the lazy dog"
 str2 = "cat"
 print(find_substring(str1, str2)) # поверне -1
 
-print("#"*100)
+print("#" * 100)
 
 """  Оберіть будь-які 4 таски з попередніх домашніх робіт та
 перетворіть їх у 4 функції, що отримують значення та повертають результат.
@@ -116,7 +116,7 @@ def sum_for_even_numbers(numbers):
 numbers = [3, 4, 5, 6]
 sum_for_even_numbers(numbers)
 
-print("#"*100)
+print("#" * 100)
 
 # task 8
 """"" Є list з даними lst1 = ['1', '2', 3, True, 'False', 5, '6', 7, 8, 'Python', 9, 0, 'Lorem Ipsum'].
@@ -138,7 +138,7 @@ def creator_string_list(list1):
 lst1 = ['1', '2', 3, True, 'False', 5, '6', 7, 8, 'Python', 9, 0, 'Lorem Ipsum']
 creator_string_list(lst1)
 
-print("#"*100)
+print("#" * 100)
 
 
 # task 9
@@ -150,7 +150,7 @@ print("#"*100)
 def search_h_letter():
 
     while True:
-        input_string = input("Enter the any word with letter 'h' , please: ").lower()
+        input_string = input("Enter any word with letter 'h' , please: ").lower()
         if 'h' in input_string:
             print("Thanks, letter 'h' is present in this word!")
             break
@@ -159,7 +159,7 @@ def search_h_letter():
 
 search_h_letter()
 
-print("#"*100)
+print("#" * 100)
 
 
 # task 10
