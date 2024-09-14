@@ -24,7 +24,7 @@ class TestAverageNumbers(unittest.TestCase):
         self.assertEqual(result, -3)
 
     def test_average_negative3(self):
-        result = ([])
+        result = average_numbers([])
         self.assertEqual(result, "We dont have empty list!", msg="The list witch you check is empty!")
 
     def test_average_negative4(self):

@@ -24,7 +24,7 @@ class TestSumEvenNumbers(unittest.TestCase):
         self.assertEqual(result, 10)
 
     def test_sum_even_numbers_negative3(self):
-        result = ([])
+        result = sum_even_numbers([])
         self.assertEqual(result, "We dont have empty list!", msg="The list witch you check is empty!")
 
 if __name__ == '__main__':
