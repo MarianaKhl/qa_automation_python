@@ -23,5 +23,4 @@ def validate_json_files(directory):
                 print(f"{filename} - Invalid JSON file")
 
 json_directory = '/Users/marianna/PycharmProjects/demo/automation_qa/ideas_for_test/work_with_json'
-
 validate_json_files(json_directory)
