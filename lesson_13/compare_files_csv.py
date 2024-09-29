@@ -19,5 +19,5 @@ def test_compare_csv_files():
     new_file = 'khlivnenko.csv'
     result_delete_duplicate.to_csv(new_file, index=False)
 
-
+test_compare_csv_files()
 
