@@ -41,15 +41,18 @@ users = {
     "test_user": "test_pass"
 }
 
+
 # function for user authentication
 def authenticate(username, password):
-    if username in users and users[username] ==  password:
+    if username in users and users[username] == password:
         return username
+
 
 # function to identify the user by ID
 def identity(payload):
     username = payload['identity']
     return {"username": username}
+
 
 # endpoint for receiving the access token
 @app.route('/auth', methods=['POST'])
@@ -65,19 +68,22 @@ def login():
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token), 200
 
+
 # endpoint for finding cars
 @app.route('/cars', methods=['GET'])
 @jwt_required()
 def get_cars():
     sort_by = request.args.get('sort_by')
     limit = request.args.get('limit')
-    
+
     sorted_cars = sorted(cars_db.values(), key=lambda x: x.get(sort_by, 0) if sort_by else x['brand'])
     limited_cars = sorted_cars[:int(limit)] if limit else sorted_cars
-    
+
     return jsonify(limited_cars), 200
+
 
 if __name__ == '__main__':
     host = '127.0.0.1'
     port = 8080
     app.run(host=host, port=port, debug=True)
+
