@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # driver initialization
 driver = webdriver.Chrome()
 
-# opening the main HTML page, start server the first in the console = python -m http.server 8000
+# opening the main HTML page, start server the first in the console = python3 -m http.server 8000
 driver.get("http://localhost:8000/dz.html")
 
 try:
@@ -22,7 +22,7 @@ try:
 
     # checking the message in the dialog box
     alert1 = Alert(driver)
-    assert "Verification was successful!" in alert1.text
+    assert "Верифікація пройшла успішно!" in alert1.text
     print("Frame1 verification successful")
     alert1.accept()
 
@@ -39,13 +39,16 @@ try:
     button2.click()
 
     alert2 = Alert(driver)
-    assert "Verification was successful!" in alert2.text
+    assert "Верифікація пройшла успішно!" in alert2.text
     print("Frame2 verification successful")
     alert2.accept()
 
 except Exception as e:
+    import traceback
     print(f"An error occurred: {e}")
+    traceback.print_exc()
 
 finally:
     # closing the browser
     driver.quit()
+
