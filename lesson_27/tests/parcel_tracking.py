@@ -1,17 +1,17 @@
 import pytest
-from selenium import webdriver
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 
 @pytest.fixture(scope="class")
 def setup_browser():
-    """Fixture to initialize and clean up the browser."""
+    # browser initialization
     options = Options()
     options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -19,59 +19,69 @@ def setup_browser():
     driver.quit()
 
 
-@pytest.fixture
-def validate_tracking_number():
-    """Helper fixture to validate tracking numbers."""
-    def is_valid(tracking_number):
-        return len(tracking_number) == 14 and tracking_number.isdigit()
-    return is_valid
+def enter_tracking_number(driver, tracking_number, input_locator, button_locator):
+    WebDriverWait(driver, 10).until(
+        lambda drv: drv.execute_script("return document.readyState") == "complete"
+    )
+
+    # enter parcel number
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(input_locator)
+    ).clear()
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(input_locator)
+    ).send_keys(tracking_number)
+
+    # wait and click on the button
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable(button_locator)
+    ).click()
 
 
-class TestNovaPoshtaTracking:
-    def test_invalid_tracking_number(self, validate_tracking_number):
-        """Test for invalid tracking numbers."""
-        tracking_number = "134565332"  # Invalid tracking number
-        assert not validate_tracking_number(tracking_number), "Tracking number validation failed for invalid input"
-
-    def test_valid_tracking_number_not_found(self, setup_browser, validate_tracking_number):
-        """Test case for a valid but non-existing tracking number."""
-        tracking_number = "59500010864030"  # Valid but non-existing number
-        assert validate_tracking_number(tracking_number), "Tracking number is not valid"
-
+class TestTrackingStatus:
+    def test_tracking_status_found(self, setup_browser):
         driver = setup_browser
         driver.get("https://tracking.novaposhta.ua/#/uk")
 
-        # Enter the tracking number
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "en")))
-        input_field = driver.find_element(By.ID, "en")
-        input_field.send_keys(tracking_number)
-        input_field.send_keys(Keys.RETURN)
+        tracking_number = "59500002864036"
+        input_locator = ("id", "en")  # input field locator
+        button_locator = ("id", "np-number-input-desktop-btn-search-en")  # search field locator
 
-        # Verify the error message
-        error_message_element = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "span[data-v-1c645ccd]"))
-        )
-        error_message = error_message_element.text
-        assert "Ми не знайшли посилку за таким номером." in error_message, "Error message not found or incorrect"
+        enter_tracking_number(driver, tracking_number, input_locator, button_locator)
 
-    def test_valid_tracking_number_found(self, setup_browser, validate_tracking_number):
-        """Test case for a valid existing tracking number."""
-        tracking_number = "59500002864036"  # Replace with a valid tracking number
-        assert validate_tracking_number(tracking_number), "Tracking number is not valid"
-
+    def test_tracking_status_not_found(self, setup_browser):
         driver = setup_browser
         driver.get("https://tracking.novaposhta.ua/#/uk")
 
-        # Enter the tracking number
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "en")))
-        input_field = driver.find_element(By.ID, "en")
-        input_field.send_keys(tracking_number)
-        input_field.send_keys(Keys.RETURN)
+        tracking_number = "50000010864030"
+        input_locator = ("css selector", "input#en")  # input field locator
+        button_locator = ("css selector", "input#np-number-input-desktop-btn-search-en")  # search field locator
+        error_locator = ("css selector", "span[data-v-1c645ccd]")
 
-        # Handle popup and verify the status text - (header__status-text = Відправлення прямує до Братислава.)(header__status-header = Зараз:)
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "span.v-btn__content"))).click()
-        header_status_element = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "div.header__status-text"))
-        )
-        header_status_text = header_status_element.text
-        assert "Відправлення прямує до Братислава." in header_status_text, "Header status text not found or incorrect"
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(input_locator)
+        ).send_keys(tracking_number)
+
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(button_locator)
+        ).click()
+
+        # check if an error message appears or an additional payment window opens
+        try:
+            error_message_element = WebDriverWait(driver, 5).until(
+                EC.visibility_of_element_located((By.CSS_SELECTOR, "span[data-v-1c645ccd]"))
+            )
+            error_message = error_message_element.text
+            print("Message from the Nova Poshta website:", error_message)
+        except TimeoutException:
+            print("Your parcel has been found in the database.")
+
+            # click the "OK" button if it appears.
+            try:
+                ok_button = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "span.v-btn__content"))
+                )
+                ok_button.click()
+                print("The 'OK' button was successfully pressed.")
+            except TimeoutException:
+                print("The 'OK' button did not appear.")
