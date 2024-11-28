@@ -34,7 +34,7 @@ def test_registration_error_messages(driver):
     # click the "Sign up" button
     driver.find_element(By.XPATH, "//button[text()='Sign up']").click()
 
-    # Очікуємо відкриття форми
+    # waiting for the form to open.
     WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.CLASS_NAME, "modal-body"))
     )
@@ -117,13 +117,16 @@ def test_registration_error_messages(driver):
 def name():
     return "John"
 
+
 @pytest.fixture
 def last_name():
     return "Doe"
 
+
 @pytest.fixture
 def email():
     return "johndoe@example.com"
+
 
 @pytest.fixture
 def password():
@@ -165,5 +168,4 @@ def register_user(driver):   #  fixture for registering a user on a website. Ret
             return {"status": "success", "messages": {"info": "Registration successful"}}
 
     return _register
-
 

@@ -264,3 +264,4 @@ def test_invalid_repeat_password_registration(driver, register_user):
     assert actual_error == expected_error, (
         f"Expected message: '{expected_error}', but received: '{actual_error}'"
     )
+
