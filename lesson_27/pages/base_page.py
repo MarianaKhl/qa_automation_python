@@ -1,18 +1,30 @@
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common import TimeoutException
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 
 class BasePage:
     def __init__(self, driver):
         self.driver = driver
-
-    def wait_for_element(self, locator, condition, timeout=10):
-        return WebDriverWait(self.driver, timeout).until(condition(locator))
-
-    def click_element(self, locator):
-        element = self.wait_for_element(locator, EC.element_to_be_clickable)
-        element.click()
+        self.wait = WebDriverWait(driver, 10)
 
     def enter_text(self, locator, text):
-        input_field = self.wait_for_element(locator, EC.presence_of_element_located)
-        input_field.clear()
-        input_field.send_keys(text)
+        element = self.wait.until(EC.presence_of_element_located(locator))
+        element.clear()
+        element.send_keys(text)
+
+    def click_element(self, locator):
+        element = self.wait.until(EC.element_to_be_clickable(locator))
+        element.click()
+
+    def get_text(self, locator):
+        element = self.wait.until(EC.visibility_of_element_located(locator))
+        return element.text
+
+    def is_element_visible(self, locator):
+        try:
+            self.wait.until(EC.visibility_of_element_located(locator))
+            return True
+        except TimeoutException:
+            return False
+
