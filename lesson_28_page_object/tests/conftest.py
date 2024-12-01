@@ -169,3 +169,9 @@ def register_user(driver):   #  fixture for registering a user on a website. Ret
 
     return _register
 
+
+def fill_field(self, field_locator, value):
+    field = WebDriverWait(self.driver, 10).until(
+        EC.element_to_be_clickable(field_locator))
+    field.clear()
+    field.send_keys(value)

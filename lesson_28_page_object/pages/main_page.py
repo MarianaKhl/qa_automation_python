@@ -10,77 +10,66 @@ class MainPage(BasePage):
     def __init__(self, driver):
         self.driver = driver
 
-    def get_error_message(self, locator):
+    def click_signup_button(self):
+        signup_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[text()='Sign up']"))
+        )
+        signup_button.click()
+
+    def fill_form(self, name, last_name, email, password, repeat_password):
+        self.fill_field((By.ID, "signupName"), name)
+        self.fill_field((By.ID, "signupLastName"), last_name)
+        self.fill_field((By.ID, "signupEmail"), email)
+        self.fill_field((By.ID, "signupPassword"), password)
+        self.fill_field((By.ID, "signupRepeatPassword"), repeat_password)
+
+    def fill_field(self, field_locator, value):
+        field = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(field_locator)
+        )
+        field.clear()
+        field.send_keys(value)
+
+    def submit_form(self):
+        register_button = self.driver.find_element(By.XPATH, "//button[text()='Register']")
+        register_button.click()
+
+    def wait_for_element_visibility(self, locator, timeout=10):
         try:
-            error_element = WebDriverWait(self.driver, 5).until(
-                EC.presence_of_element_located((By.XPATH, locator))
+            element = WebDriverWait(self.driver, timeout).until(
+                EC.visibility_of_element_located(locator)
             )
-            return error_element.text.strip()
+            return element
         except TimeoutException:
-            logging.error("No error message found.")
-            return "No error message found"
+            raise AssertionError(f"Element with locator {locator} did not become visible within {timeout} seconds.")
 
-    def close_modal_if_present(self):
+    def wait_for_registration_to_complete(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-body"))
+        )
+
+    def check_redirect_to_profile(self):
         try:
-            modal_close_button = WebDriverWait(self.driver, 5).until(
-                EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='Close']"))
+            WebDriverWait(self.driver, 15).until(
+                EC.url_contains("/panel/garage")
             )
-            modal_close_button.click()
-            logging.info("The modal window has been closed successfully.")
         except TimeoutException:
-            logging.info("There is no modal window, let's continue.")
+            raise AssertionError("After registration, there was no redirection to the user profile.")
 
-    def click_signup_button_with_js(self):
+    def wait_for_error_message(self, error_selector):
         try:
-            signup_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, "//button[text()='Sign up']"))
+            error_element = WebDriverWait(self.driver, 10).until(
+                EC.visibility_of_element_located(error_selector)
             )
-            self.driver.execute_script("arguments[0].click();", signup_button)
-            logging.info("The 'Sign up' button was successfully clicked.")
-        except TimeoutException as e:
-            logging.error(f"Error when clicking the 'Sign up' button: {e}")
-            raise
+            return error_element.text
+        except TimeoutException:
+            raise AssertionError("The error message did not appear on the page.")
 
-    def wait_for_registration_form(self):
+    def is_error_message_displayed(self, error_selector):
         try:
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.NAME, "name"))
+                EC.visibility_of_element_located(error_selector)
             )
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.NAME, "lastName"))
-            )
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.NAME, "email"))
-            )
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.NAME, "password"))
-            )
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, "signupRepeatPassword"))
-            )
-            logging.info("The registration form has been successfully uploaded.")
-        except Exception as e:
-            logging.error(f"Error loading registration form: {e}")
-            raise
-
-    def is_success_message_displayed(self):
-        try:
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "success-message"))
-            )
-            logging.info("A message about successful registration has been found.")
             return True
         except TimeoutException:
-            logging.error("A message about successful registration was NOT found.")
-            return False
-
-    def is_error_message_displayed(self):
-        try:
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "error-message"))
-            )
-            logging.info("Error message found.")
-            return True
-        except TimeoutException:
-            logging.error("Error message NOT found.")
             return False

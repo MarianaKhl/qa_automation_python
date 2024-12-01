@@ -15,7 +15,6 @@ def get_error_message(driver, xpath):
 
 
 def validate_registration_errors(driver):
-
     errors = {}
     errors['name'] = get_error_message(driver, "//input[@name='name']/following-sibling::div[@class='invalid-feedback']/p")
     errors['email'] = get_error_message(driver, "//input[@name='email']/following-sibling::div[@class='invalid-feedback']/p")
