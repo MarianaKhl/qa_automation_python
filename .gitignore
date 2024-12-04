@@ -1,7 +1,30 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+Dockerfile
+docker-compose.yml
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.sqlite
+lesson_29_docker/*.yml
+lesson_29_docker/Dockerfile
+# Docker
+*.log
+.DS_Store
+
+# pytest cache
+.pytest_cache/
+
+# Venv
+.venv/
+env/
+
+# IDE/Editor files
+.idea/
+.vscode/
 
 # C extensions
 *.so
