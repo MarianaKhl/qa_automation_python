@@ -1,0 +1,10 @@
+2024-12-04 20:34:12 INFO Inserted course with ID: 3
+2024-12-04 20:34:12 INFO Updated course ID 3 to Advanced Python Programming.
+2024-12-04 20:34:12 INFO Deleted course: Advanced Python Programming
+2024-12-04 20:34:12 INFO Inserted student with ID: 3
+2024-12-04 20:34:12 INFO Updated student ID 3 to John Smith.
+2024-12-04 20:34:12 INFO Deleted student: John Smith
+2024-12-04 20:34:12 INFO Inserted course with ID: 4
+2024-12-04 20:34:12 INFO Inserted student with ID: 4
+2024-12-04 20:34:12 INFO Enrolled student ID 4 in course ID 4.
+2024-12-04 20:34:12 INFO Deleted enrollment for student ID 4 and course ID 4.
