@@ -1,7 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","266","test_short_password_registration","lesson_30_allure.tests","Thu Dec 05 22:54:35 CET 2024","passed","Thu Dec 05 22:54:35 CET 2024","","test_user_registration","",""
-"","293","test_invalid_name_registration","lesson_30_allure.tests","Thu Dec 05 22:54:29 CET 2024","passed","Thu Dec 05 22:54:30 CET 2024","","test_user_registration","",""
-"","271","test_invalid_email_registration","lesson_30_allure.tests","Thu Dec 05 22:54:32 CET 2024","passed","Thu Dec 05 22:54:33 CET 2024","","test_user_registration","",""
-"","335","test_invalid_repeat_password_registration","lesson_30_allure.tests","Thu Dec 05 22:54:38 CET 2024","passed","Thu Dec 05 22:54:38 CET 2024","","test_user_registration","",""
-"","11040","test_successful_registration","lesson_30_allure.tests","Thu Dec 05 22:54:12 CET 2024","broken","Thu Dec 05 22:54:23 CET 2024","","test_user_registration","",""
-"","1179","test_existing_user_registration","lesson_30_allure.tests","Thu Dec 05 22:54:25 CET 2024","passed","Thu Dec 05 22:54:27 CET 2024","","test_user_registration","",""
