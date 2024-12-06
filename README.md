@@ -1,1 +1,1 @@
-# Lesson_2-GitHub-
+# Lesson_2-GitHub-[homework_01.py](..%2F..%2F..%2FDocuments%2FAutomat_Python%2Fhomework_01.py)
