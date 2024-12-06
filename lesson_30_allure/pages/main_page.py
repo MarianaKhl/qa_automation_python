@@ -1,86 +1,61 @@
-import logging
+
 import allure
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from lesson_30_allure.pages.base_page import BasePage
 
 
 class MainPage(BasePage):
-    def __init__(self, driver):
-        self.driver = driver
+    MODAL_BODY = (By.CLASS_NAME, "modal-body")
+    NAME_FIELD = (By.ID, "signupName")
+    LAST_NAME_FIELD = (By.ID, "signupLastName")
+    EMAIL_FIELD = (By.ID, "signupEmail")
+    PASSWORD_FIELD = (By.ID, "signupPassword")
+    REPEAT_PASSWORD_FIELD = (By.ID, "signupRepeatPassword")
+    SIGNUP_BUTTON = (By.XPATH, "//button[text()='Sign up']")
+    REGISTER_BUTTON = (By.XPATH, "//button[text()='Register']")
 
-    @allure.step("Click on the button 'Registration'")
+    ERROR_NAME = (By.CSS_SELECTOR, "#signupName + .invalid-feedback")
+    ERROR_EMAIL = (By.CSS_SELECTOR, "#signupEmail + .invalid-feedback")
+    ERROR_PASSWORD = (By.CSS_SELECTOR, "#signupPassword + .invalid-feedback")
+
+    @allure.step("Waiting for the registration modal to disappear")
+    def wait_for_registration_to_complete(self, timeout=10):
+        self.wait_for_element_invisibility(self.MODAL_BODY, timeout)
+
+    @allure.step("Click on the 'Sign up' button")
     def click_signup_button(self):
-        signup_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[text()='Sign up']"))
-        )
-        signup_button.click()
+        self.click_element(*self.SIGNUP_BUTTON)
 
-    @allure.step("Fill in the form of registration.")
+    @allure.step("Wait for the registration modal to be visible")
+    def wait_for_modal_to_appear(self):
+        self.wait_for_element_visibility(self.MODAL_BODY)
+
+    @allure.step("Fill the registration form")
     def fill_form(self, name, last_name, email, password, repeat_password):
-        self.fill_field((By.ID, "signupName"), name)
-        self.fill_field((By.ID, "signupLastName"), last_name)
-        self.fill_field((By.ID, "signupEmail"), email)
-        self.fill_field((By.ID, "signupPassword"), password)
-        self.fill_field((By.ID, "signupRepeatPassword"), repeat_password)
+        self.fill_field(self.NAME_FIELD, name)
+        self.fill_field(self.LAST_NAME_FIELD, last_name)
+        self.fill_field(self.EMAIL_FIELD, email)
+        self.fill_field(self.PASSWORD_FIELD, password)
+        self.fill_field(self.REPEAT_PASSWORD_FIELD, repeat_password)
 
-    @allure.step("Fill in the field of registration.")
-    def fill_field(self, field_locator, value):
-        field = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(field_locator)
-        )
-        field.clear()
-        field.send_keys(value)
+    @allure.step("Submit the registration form")
+    def submit_registration_form(self):
+        self.click_element(*self.REGISTER_BUTTON)
 
-    @allure.step("Click on the button of registration.")
-    def submit_form(self):
-        register_button = self.driver.find_element(By.XPATH, "//button[text()='Register']")
-        register_button.click()
-
-    @allure.step("Waiting for element to visibility.")
-    def wait_for_element_visibility(self, locator, timeout=10):
+    @allure.step("Check if redirected to profile page")
+    def check_redirect_to_profile(self, timeout=15):
         try:
-            element = WebDriverWait(self.driver, timeout).until(
-                EC.visibility_of_element_located(locator)
-            )
-            return element
-        except TimeoutException:
-            raise AssertionError(f"Element with locator {locator} did not become visible within {timeout} seconds.")
-
-    @allure.step("Waiting for registration to complete.")
-    def wait_for_registration_to_complete(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-body"))
-        )
-
-    @allure.step("Check redirect to profile.")
-    def check_redirect_to_profile(self):
-        try:
-            WebDriverWait(self.driver, 15).until(
+            WebDriverWait(self.driver, timeout).until(
                 EC.url_contains("/panel/garage")
             )
         except TimeoutException:
-            raise AssertionError("After registration, there was no redirection to the user profile.")
-
-    @allure.step("Waiting for error message.")
-    def wait_for_error_message(self, error_selector):
-        try:
-            error_element = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(error_selector)
+            allure.attach(
+                self.driver.get_screenshot_as_png(),
+                name="redirect_failure",
+                attachment_type=allure.attachment_type.PNG
             )
-            return error_element.text
-        except TimeoutException:
-            raise AssertionError("The error message did not appear on the page.")
-
-    @allure.step("Is error message displays.")
-    def is_error_message_displayed(self, error_selector):
-        try:
-            WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(error_selector)
-            )
-            return True
-        except TimeoutException:
-            return False
+            raise AssertionError("No redirect to profile page after registration.")
 

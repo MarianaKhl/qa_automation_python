@@ -21,11 +21,11 @@ def driver():
     driver = webdriver.Chrome(service=service)
     driver.maximize_window()
     yield driver
-    # closing the driver after the test
+
     driver.quit()
 
 @allure.feature("Registration")
-@pytest.fixture(scope="function")      # fixture for going to the site
+@pytest.fixture(scope="function")
 def navigate_to_site(driver):
     url = "https://guest:welcome2qauto@qauto2.forstudy.space/"
     driver.get(url)
@@ -36,15 +36,12 @@ def navigate_to_site(driver):
 def test_registration_error_messages(driver):
     driver.get("https://guest:welcome2qauto@qauto2.forstudy.space/")
 
-    # click the "Sign up" button
     driver.find_element(By.XPATH, "//button[text()='Sign up']").click()
 
-    # waiting for the form to open.
     WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.CLASS_NAME, "modal-body"))
     )
 
-    # defining selectors for each field and corresponding messages
     fields = [
         {
             "field_selector": (By.ID, "signupName"),
@@ -81,16 +78,10 @@ def test_registration_error_messages(driver):
         },
     ]
 
-    # validation for each field
     for field in fields:
-        # field cleaning
         driver.find_element(*field["field_selector"]).clear()
-        # entering a test value
         driver.find_element(*field["field_selector"]).send_keys(field["input_value"])
-        # click outside the field to trigger validation
         driver.find_element(By.TAG_NAME, "body").click()
-
-        # waiting for an error to appear
         error_element = WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located(field["error_selector"])
         )
@@ -101,7 +92,6 @@ def test_registration_error_messages(driver):
             f"but received: '{actual_error}'"
         )
 
-    # check the general error message
     driver.find_element(By.ID, "signupEmail").clear()
     driver.find_element(By.ID, "signupEmail").send_keys("test@example.com")
     driver.find_element(By.ID, "signupPassword").send_keys("TestPassword123")
@@ -139,25 +129,20 @@ def password():
 
 
 @pytest.fixture
-def register_user(driver):   #  fixture for registering a user on a website. Returns the registration result.
+def register_user(driver):
     def _register(first_name, last_name, email, password):
-        # form filling logic
         driver.find_element(By.ID, "signupFirstName").send_keys(first_name)
         driver.find_element(By.ID, "signupLastName").send_keys(last_name)
         driver.find_element(By.ID, "signupEmail").send_keys(email)
         password_field = driver.find_element(By.ID, "signupPassword")
         password_field.send_keys(password)
 
-        # click on the password field to send it
         password_field.click()
 
-        # click outside the password field to remove focus
         driver.execute_script("document.activeElement.blur();")
 
-        # pressing the registration button
         driver.find_element(By.XPATH, "//button[text()='Sign up']").click()
 
-        # checking if an error has occurred
         try:
             WebDriverWait(driver, 10).until(
                 EC.visibility_of_element_located((By.CSS_SELECTOR, ".invalid-feedback"))
