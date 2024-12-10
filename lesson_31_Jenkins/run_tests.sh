@@ -1,39 +1,25 @@
 #!/bin/bash
 
-BASE_DIR=$(cd "$(dirname "$0")"; pwd)
-ALLURE_RESULTS_DIR="$BASE_DIR/allure-results"
-ALLURE_REPORT_DIR="$BASE_DIR/allure-report"
+echo "Creating directories for Allure results..."
+mkdir -p lesson_31_Jenkins/allure-results
+mkdir -p lesson_31_Jenkins/allure-report
 
-echo "Base directory: $BASE_DIR"
-
-mkdir -p "$ALLURE_RESULTS_DIR"
-mkdir -p "$ALLURE_REPORT_DIR"
-
-echo "Clearing previous results..."
-rm -rf "$ALLURE_RESULTS_DIR/*"
-rm -rf "$ALLURE_REPORT_DIR/*"
+echo "Activating virtual environment..."
+source venv/bin/activate
 
 echo "Running tests with pytest..."
-pytest --alluredir="$ALLURE_RESULTS_DIR"
-if [ $? -ne 0 ]; then
-    echo "ERROR: Tests failed. Check the output for more details."
-    exit 1
-fi
+set +e
+pytest --alluredir=lesson_31_Jenkins/allure-results
+TEST_EXIT_CODE=$?
+set -e
 
 echo "Generating Allure report..."
-allure generate "$ALLURE_RESULTS_DIR" -o "$ALLURE_REPORT_DIR" --clean
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to generate Allure report."
-    exit 1
+allure generate lesson_31_Jenkins/allure-results -o lesson_31_Jenkins/allure-report --clean
+
+if [ $TEST_EXIT_CODE -ne 0 ]; then
+    echo "Tests failed. Review the Allure report for details."
+    exit $TEST_EXIT_CODE
 fi
 
-echo "Allure report successfully generated in $ALLURE_REPORT_DIR."
-
-JENKINS_OUTPUT_DIR="$WORKSPACE/allure-report"
-echo "Copying Allure report to Jenkins workspace: $JENKINS_OUTPUT_DIR"
-mkdir -p "$JENKINS_OUTPUT_DIR"
-cp -r "$ALLURE_REPORT_DIR/"* "$JENKINS_OUTPUT_DIR/"
-
-echo "Test execution and report generation completed successfully."
+echo "All tests passed successfully."
 exit 0
-
