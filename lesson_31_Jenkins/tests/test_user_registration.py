@@ -14,7 +14,7 @@ def test_successful_registration(driver):
     main_page.fill_form(
         name="Test",
         last_name="User",
-        email="lj94ppuser@example.com",
+        email="jjj94ppuser@example.com",
         password="ValidPass123",
         repeat_password="ValidPass123"
     )
