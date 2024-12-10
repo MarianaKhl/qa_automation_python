@@ -45,10 +45,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh """
-                    echo "Making run_tests.sh executable..."
                     chmod +x lesson_31_Jenkins/run_tests.sh
-
-                    echo "Running tests from repository..."
                     ./lesson_31_Jenkins/run_tests.sh
                 """
             }
@@ -56,8 +53,15 @@ pipeline {
 
         stage('Publish Test Results') {
             steps {
-                junit '**/allure-results/*.xml'
+                junit 'lesson_31_Jenkins/allure-results/*.xml'
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Generating Allure report..."
+            allure includeProperties: false, jdk: '', results: [[path: 'lesson_31_Jenkins/allure-results']]
         }
     }
 }
