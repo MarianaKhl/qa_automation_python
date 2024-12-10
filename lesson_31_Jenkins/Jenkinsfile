@@ -50,7 +50,18 @@ pipeline {
                 """
             }
         }
+        stage('Publish Test Results') {
+            steps {
+                junit 'lesson_31_Jenkins/allure-results/*.xml'
+            }
+        }
+    }
 
+    post {
+        always {
+            echo "Generating Allure report..."
+            allure includeProperties: false, jdk: '', results: [[path: 'lesson_31_Jenkins/allure-results']]
+        }
     }
 }
 
