@@ -1,7 +1,7 @@
 import allure
 import pytest
 from selenium.webdriver.common.by import By
-from lesson_30_allure.pages.main_page import MainPage
+from lesson_31_Jenkins.pages.main_pages import MainPage
 
 
 @allure.feature("Registration")
@@ -93,4 +93,3 @@ def test_short_password_registration(driver):
         f"Message expected: '{expected_error}', but received: '{error_message}'"
     )
 
-    

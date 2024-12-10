@@ -3,7 +3,7 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from lesson_30_allure.pages.base_page import BasePage
+from lesson_31_Jenkins.pages.base_page import BasePage
 
 
 class MainPage(BasePage):
@@ -57,4 +57,3 @@ class MainPage(BasePage):
                 attachment_type=allure.attachment_type.PNG
             )
             raise AssertionError("No redirect to profile page after registration.")
-        
