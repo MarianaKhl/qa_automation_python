@@ -1,32 +1,20 @@
 #!/bin/bash
 
-# Set base directory
-BASE_DIR=$(dirname "$0")
+# make file executable = chmod +x run_tests.sh
+# start run = ./run_tests.sh
 
-# Log start of the process
-echo "Starting test execution and report generation..."
+# clearing previous results
+rm -rf allure-results/*
+rm -rf allure-report/*
 
-# Clearing previous results
-echo "Clearing previous test results..."
-rm -rf "${BASE_DIR}/allure-results/*"
-rm -rf "${BASE_DIR}/allure-report/*"
+# start tests
+pytest --alluredir=allure-results
 
-# Run tests
-echo "Running tests with pytest..."
-pytest --alluredir="${BASE_DIR}/allure-results"
+# generation report
+allure generate allure-results -o allure-report --clean
 
-# Check if Allure results exist
-if [ ! -d "${BASE_DIR}/allure-results" ] || [ -z "$(ls -A ${BASE_DIR}/allure-results)" ]; then
-  echo "ERROR: No Allure results found. Tests may have failed or produced no output."
-  exit 1
-fi
+# open report
+allure open allure-report
 
-# Generate Allure report
-echo "Generating Allure report..."
-allure generate "${BASE_DIR}/allure-results" -o "${BASE_DIR}/allure-report" --clean
-
-# Log completion
-echo "Allure report generated successfully in ${BASE_DIR}/allure-report."
-
-# Exit script
 exit 0
+
