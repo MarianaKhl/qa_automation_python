@@ -1,25 +1,27 @@
 #!/bin/bash
 
-# Make the file executable: chmod +x run_tests.sh
-# Start the run: ./run_tests.sh
+# Set base directory
+BASE_DIR=$(dirname "$0")
+
+# Log start of the process
+echo "Starting test execution..."
 
 # Clearing previous results
-rm -rf allure-results/*
-rm -rf allure-report/*
+echo "Clearing previous test results..."
+rm -rf "${BASE_DIR}/allure-results/*"
 
-# Start tests
-pytest --alluredir=allure-results
+# Run tests
+echo "Running tests with pytest..."
+pytest --alluredir="${BASE_DIR}/allure-results"
 
-# Generate the report
-allure generate allure-results -o allure-report --clean
+# Check if tests passed successfully
+if [ $? -ne 0 ]; then
+  echo "ERROR: Tests failed. Please check the output for more details."
+  exit 1
+fi
 
-# Open the report (in background) and wait for a few seconds
-allure open allure-report &
-ALLURE_PID=$!
+# Log completion
+echo "Tests completed successfully."
 
-# Wait for a few seconds to ensure the report is opened
-sleep 10
-
-# Stop the Allure server
-echo "Stopping Allure server..."
-kill $ALLURE_PID
+# Exit script
+exit 0
