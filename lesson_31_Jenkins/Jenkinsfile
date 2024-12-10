@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHON_ENV = "python3"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/main']],
+                          userRemoteConfigs: [[url: 'https://github.com/MarianaKhl/qa_automation_python/tree/homework31/lesson_31_Jenkins']]])
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh """
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    python3 -m pip3 install --upgrade pip
+                    python3 -m pip3 install -r requirements.txt
+                   """
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh """
+                    chmod +x run_tests.sh
+                    sh './run_tests.sh
+                    """
+            }
+        }
+
+        stage('Publish Test Results') {
+            steps {
+                junit 'allure-results/*.xml'
+            }
+        }
+    }
+}
+
