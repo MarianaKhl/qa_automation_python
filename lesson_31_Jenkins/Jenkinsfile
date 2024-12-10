@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        allure 'Allure CMD'
+    }
 
     stages {
         stage('Checkout Code') {
@@ -20,20 +23,11 @@ pipeline {
                 sh """
                     echo "Creating virtual environment with Python3..."
                     python3 -m venv venv
-                    echo "Activating virtual environment..."
-                    source venv/bin/activate
-
-                    echo "Checking Python and pip versions..."
-                    python3 --version
-                    pip3 --version
-
-                    echo "Ensuring pip is installed and up to date..."
-                    python3 -m ensurepip --upgrade
-                    pip3 install --upgrade pip
+                    venv/bin/python3 -m pip install --upgrade pip
 
                     echo "Checking for requirements.txt in lesson_31_Jenkins..."
                     if [ -f lesson_31_Jenkins/requirements.txt ]; then
-                        pip3 install -r lesson_31_Jenkins/requirements.txt
+                        venv/bin/python3 -m pip install -r lesson_31_Jenkins/requirements.txt
                     else
                         echo "ERROR: requirements.txt not found!"
                         exit 1
@@ -45,14 +39,20 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh """
+                    echo "Creating directories for Allure results..."
+                    mkdir -p lesson_31_Jenkins/allure-results
+                    mkdir -p lesson_31_Jenkins/allure-report
+
+                    echo "Running tests with pytest..."
                     chmod +x lesson_31_Jenkins/run_tests.sh
                     ./lesson_31_Jenkins/run_tests.sh
                 """
             }
         }
+
         stage('Publish Test Results') {
             steps {
-                junit 'lesson_31_Jenkins/allure-results/*.xml'
+                junit 'lesson_31_Jenkins/allure-results/results.xml'
             }
         }
     }
@@ -64,5 +64,6 @@ pipeline {
         }
     }
 }
+
 
 
