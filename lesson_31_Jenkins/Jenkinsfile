@@ -45,14 +45,11 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh """
-                    echo "Before running tests, verifying working directory and its contents:"
-                    pwd
-                    ls -la
+                    echo "Making run_tests.sh executable..."
+                    chmod +x lesson_31_Jenkins/run_tests.sh
 
-                    echo "Activating virtual environment for tests..."
-                    source venv/bin/activate
-                    chmod +x run_tests.sh
-                    ./run_tests.sh
+                    echo "Running tests from repository..."
+                    ./lesson_31_Jenkins/run_tests.sh
                 """
             }
         }
