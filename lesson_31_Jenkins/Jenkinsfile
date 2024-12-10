@@ -56,8 +56,7 @@ pipeline {
 
         stage('Publish Test Results') {
             steps {
-                echo "Publishing test results..."
-                junit 'allure-results/*.xml'
+                junit '**/allure-results/*.xml'
             }
         }
     }
