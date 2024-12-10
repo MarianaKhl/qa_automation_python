@@ -1,24 +1,25 @@
 #!/bin/bash
 
-# make file executable = chmod +x run_tests.sh
-# start run = ./run_tests.sh
+# Make the file executable: chmod +x run_tests.sh
+# Start the run: ./run_tests.sh
 
-# Activate virtual environment
-source venv/bin/activate
-
-# clearing previous results
-echo "Clearing previous test results..."
+# Clearing previous results
 rm -rf allure-results/*
 rm -rf allure-report/*
 
-# start tests
-echo "Running tests..."
+# Start tests
 pytest --alluredir=allure-results
 
-# generation report
-echo "Generating Allure report..."
+# Generate the report
 allure generate allure-results -o allure-report --clean
 
-# open report
-echo "Opening Allure report..."
-allure open allure-report
+# Open the report (in background) and wait for a few seconds
+allure open allure-report &
+ALLURE_PID=$!
+
+# Wait for a few seconds to ensure the report is opened
+sleep 10
+
+# Stop the Allure server
+echo "Stopping Allure server..."
+kill $ALLURE_PID
